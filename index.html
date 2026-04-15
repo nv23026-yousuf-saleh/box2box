@@ -1462,7 +1462,7 @@
     <li><a href="#crisis">Scenarios</a></li>
     <li><a href="#features">Features</a></li>
   </ul>
-  <button class="btn-primary" style="font-size:0.8rem;padding:10px 24px" onclick="document.getElementById('lobbyModal').classList.add('active')">Create Lobby</button>
+  <button class="btn-primary" style="font-size:0.8rem;padding:10px 24px" onclick="document.getElementById('lobbyModal').classList.add('active')">Start Offline Game</button>
 </nav>
 
 <!-- HERO -->
@@ -1480,11 +1480,11 @@
 
   <p class="hero-tagline">
     Three managers. One broken club. Every decision public at the end.<br>
-    The real-time football rebuild game where every euro spent tells a story.
+    The same-device 3-player football rebuild game where every euro spent tells a story.
   </p>
 
   <div class="hero-cta">
-    <button class="btn-primary" onclick="document.getElementById('lobbyModal').classList.add('active')">▶ Create Lobby</button>
+    <button class="btn-primary" onclick="document.getElementById('lobbyModal').classList.add('active')">▶ Start Offline Game</button>
     <button class="btn-secondary" onclick="document.getElementById('preview').scrollIntoView({behavior:'smooth'})">See Game UI</button>
   </div>
 
@@ -1526,7 +1526,7 @@
       <div class="step-num">01</div>
       <div class="step-icon">🏟️</div>
       <div class="step-title">Lobby & Club Crisis</div>
-      <div class="step-desc">Host creates a lobby, two players join. A club scenario drops — the crisis summary sets the stakes before a single decision is made.</div>
+      <div class="step-desc">One device hosts all 3 players. Pass the screen between turns. A club scenario drops — the crisis summary sets the stakes before a single decision is made.</div>
     </div>
     <div class="flow-step">
       <div class="step-num">02</div>
@@ -1885,24 +1885,24 @@
   <div class="section-label">The Lobby</div>
   <h2 class="section-title">Three Players.<br><em>One Briefing.</em></h2>
   <p style="max-width:500px;font-size:0.95rem;line-height:1.8;color:var(--text-dim);margin-top:0.5rem">
-    Get in, pick your crisis, and rebuild. The whole lobby-to-reveal loop should feel like a show episode, not a spreadsheet.
+    Get in, pick your crisis, and rebuild. The whole setup-to-reveal loop should feel like a show episode, not a spreadsheet.
   </p>
 
   <div class="lobby-flow">
     <div class="lobby-step">
       <div class="lobby-step-icon">🏠</div>
-      <div class="lobby-step-title">Host Creates</div>
-      <div class="lobby-step-desc">Name the lobby, pick a scenario or go custom. Share the code with two friends.</div>
+      <div class="lobby-step-title">Set Up Game</div>
+      <div class="lobby-step-desc">Enter 3 player names, pick a scenario or go custom. Everything runs on one device.</div>
     </div>
     <div class="lobby-step">
       <div class="lobby-step-icon">👥</div>
-      <div class="lobby-step-title">2 Players Join</div>
-      <div class="lobby-step-desc">Enter the code or use the link. Exactly 3 players required — no more, no less.</div>
+      <div class="lobby-step-title">3 Players Rotate</div>
+      <div class="lobby-step-desc">Exactly 3 players use the same device — no codes, no links, no second screens.</div>
     </div>
     <div class="lobby-step">
       <div class="lobby-step-icon">🚀</div>
       <div class="lobby-step-title">Game Starts</div>
-      <div class="lobby-step-desc">Crisis summary drops. Cards are drawn. Decisions begin. Everyone goes at the same time.</div>
+      <div class="lobby-step-desc">Crisis summary drops. Cards are drawn. Decisions begin. Players take turns on the same screen.</div>
     </div>
   </div>
 </section>
@@ -1918,7 +1918,7 @@
 
 <footer>
   <div class="footer-logo">REBUILDR</div>
-  <div class="footer-text">A real-time 3-player football rebuild showdown. Real clubs. Real players. Real drama.</div>
+  <div class="footer-text">An offline 3-player football rebuild showdown. One device. Real clubs. Real players. Real drama.</div>
 </footer>
 
 <!-- AUCTION MODAL -->
@@ -1963,19 +1963,19 @@
 <div class="auction-overlay" id="lobbyModal" onclick="if(event.target===this)this.classList.remove('active')">
   <div class="auction-modal" style="border-top-color:var(--gold);max-width:460px">
     <div class="auction-header" style="background:rgba(245,197,24,0.06)">
-      <div class="auction-label" style="color:var(--gold)">🏟️ Create a Rebuild Lobby</div>
-      <div class="auction-player-name" style="font-size:1.6rem">Start the Session</div>
-      <div class="auction-sub">Share the code with 2 friends to begin</div>
+      <div class="auction-label" style="color:var(--gold)">🏟️ Start an Offline Rebuild Game</div>
+      <div class="auction-player-name" style="font-size:1.6rem">Start the Offline Session</div>
+      <div class="auction-sub">Enter 3 names and play on one device</div>
     </div>
 
     <div style="padding:1.5rem;display:flex;flex-direction:column;gap:1rem">
       <div>
         <div style="font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-bottom:8px">Your Name</div>
-        <input class="bid-input" type="text" placeholder="Manager name..." style="width:100%">
+        <input class="bid-input" id="offlinePlayer1" type="text" placeholder="Manager name..." style="width:100%">
       </div>
       <div>
         <div style="font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-bottom:8px">Scenario</div>
-        <select class="bid-input" style="width:100%;background:var(--surface2);cursor:pointer">
+        <select class="bid-input" id="offlineScenario" style="width:100%;background:var(--surface2);cursor:pointer">
           <option>Manchester United — £150M</option>
           <option>Borussia Dortmund — €95M</option>
           <option>AC Milan — €80M</option>
@@ -1986,27 +1986,27 @@
       </div>
 
       <div style="background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:1.25rem;text-align:center;margin-top:0.5rem">
-        <div style="font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-bottom:0.5rem">Lobby Code</div>
-        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:2.5rem;letter-spacing:6px;color:var(--gold)">RBL-4921</div>
-        <div style="font-size:0.75rem;color:var(--text-dim);margin-top:4px">Share this with 2 friends</div>
+        <div style="font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-bottom:0.5rem">Player Rotation</div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:2.5rem;letter-spacing:6px;color:var(--gold)">P1 • P2 • P3</div>
+        <div style="font-size:0.75rem;color:var(--text-dim);margin-top:4px">Pass the device between the 3 players</div>
       </div>
 
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
         <div style="background:var(--surface3);border:1px solid var(--border);border-radius:3px;padding:1rem;text-align:center">
-          <div class="player-dot you" style="margin:0 auto 8px">Y</div>
-          <div style="font-size:0.7rem;color:var(--green)">Ready</div>
+          <div class="player-dot you" id="offlineReadyDot1" style="margin:0 auto 8px">Y</div>
+          <div id="offlineReadyName1" style="font-size:0.7rem;color:var(--green)">Ready</div>
+        </div>
+        <div style="background:var(--surface3);border:1px dashed var(--border);border-radius:3px;padding:1rem;text-align:center">
+          <div id="offlineReadyDot2" style="width:32px;height:32px;border-radius:50%;border:2px dashed var(--text-muted);margin:0 auto 8px;display:flex;align-items:center;justify-content:center;color:var(--text-muted);font-size:1rem">+</div>
+          <div id="offlineReadyName2" style="font-size:0.7rem;color:var(--text-muted)">Ready...</div>
         </div>
         <div style="background:var(--surface3);border:1px dashed var(--border);border-radius:3px;padding:1rem;text-align:center">
           <div style="width:32px;height:32px;border-radius:50%;border:2px dashed var(--text-muted);margin:0 auto 8px;display:flex;align-items:center;justify-content:center;color:var(--text-muted);font-size:1rem">+</div>
-          <div style="font-size:0.7rem;color:var(--text-muted)">Waiting...</div>
-        </div>
-        <div style="background:var(--surface3);border:1px dashed var(--border);border-radius:3px;padding:1rem;text-align:center">
-          <div style="width:32px;height:32px;border-radius:50%;border:2px dashed var(--text-muted);margin:0 auto 8px;display:flex;align-items:center;justify-content:center;color:var(--text-muted);font-size:1rem">+</div>
-          <div style="font-size:0.7rem;color:var(--text-muted)">Waiting...</div>
+          <div style="font-size:0.7rem;color:var(--text-muted)">Ready...</div>
         </div>
       </div>
 
-      <button class="btn-primary" style="width:100%;font-size:1rem;padding:16px;clip-path:none;border-radius:3px">Copy Lobby Link</button>
+      <button class="btn-primary" id="offlineStartBtn" style="width:100%;font-size:1rem;padding:16px;clip-path:none;border-radius:3px" onclick="startOfflineSession()">Start Same-Device Game</button>
     </div>
   </div>
 </div>
@@ -2048,6 +2048,65 @@
     setTimeout(() => {
       closeAuction();
     }, 800);
+  }
+
+
+  function getInitials(name) {
+    return name.split(/\s+/).filter(Boolean).slice(0,2).map(part => part[0].toUpperCase()).join('') || 'P';
+  }
+
+  function markOfflineReady(dotId, nameId, name, isPrimary = false) {
+    const dot = document.getElementById(dotId);
+    const label = document.getElementById(nameId);
+    if (!dot || !label) return;
+    dot.textContent = getInitials(name);
+    dot.style.border = '2px solid var(--gold)';
+    dot.style.background = isPrimary ? 'var(--gold)' : 'var(--surface2)';
+    dot.style.color = isPrimary ? '#000' : 'var(--gold)';
+    label.textContent = name;
+    label.style.color = 'var(--green)';
+  }
+
+  function startOfflineSession() {
+    const p1Field = document.getElementById('offlinePlayer1');
+    const scenarioField = document.getElementById('offlineScenario');
+    const startBtn = document.getElementById('offlineStartBtn');
+
+    const player1 = (p1Field.value || '').trim();
+    if (!player1) {
+      p1Field.focus();
+      p1Field.style.borderColor = 'var(--red)';
+      return;
+    }
+
+    p1Field.style.borderColor = 'var(--border)';
+
+    const player2 = (window.prompt('Enter Player 2 name') || '').trim();
+    if (!player2) return;
+    const player3 = (window.prompt('Enter Player 3 name') || '').trim();
+    if (!player3) return;
+
+    markOfflineReady('offlineReadyDot1', 'offlineReadyName1', player1, true);
+    markOfflineReady('offlineReadyDot2', 'offlineReadyName2', player2);
+    markOfflineReady('offlineReadyDot3', 'offlineReadyName3', player3);
+
+    document.querySelectorAll('.topbar-players .player-dot')[0].textContent = getInitials(player1);
+    document.querySelectorAll('.topbar-players .player-dot')[0].title = player1 + ' — Player 1';
+    document.querySelectorAll('.topbar-players .player-dot')[1].textContent = getInitials(player2);
+    document.querySelectorAll('.topbar-players .player-dot')[1].title = player2 + ' — Player 2';
+    document.querySelectorAll('.topbar-players .player-dot')[2].textContent = getInitials(player3);
+    document.querySelectorAll('.topbar-players .player-dot')[2].title = player3 + ' — Player 3';
+
+    startBtn.textContent = 'Session Ready';
+    startBtn.style.opacity = '0.85';
+
+    setTimeout(() => {
+      document.getElementById('lobbyModal').classList.remove('active');
+      document.getElementById('preview').scrollIntoView({ behavior: 'smooth' });
+      setTimeout(() => {
+        alert('Offline rebuild ready for ' + player1 + ', ' + player2 + ' and ' + player3 + ' • ' + scenarioField.value);
+      }, 250);
+    }, 250);
   }
 
   function showMarket() {
