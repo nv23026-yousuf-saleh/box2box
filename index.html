@@ -1,0 +1,2085 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>REBUILDR — 3-Player Football Rebuild Showdown</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,300;0,400;0,600;0,700;0,800;0,900;1,700&family=Barlow:wght@300;400;500;600&family=Oswald:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #07080a;
+    --surface: #0e1014;
+    --surface2: #13161b;
+    --surface3: #1a1e26;
+    --border: rgba(255,255,255,0.07);
+    --border-accent: rgba(255,200,0,0.3);
+    --gold: #f5c518;
+    --gold-dim: #c9a010;
+    --gold-glow: rgba(245,197,24,0.15);
+    --green: #00d87a;
+    --red: #ff3b5c;
+    --blue: #2b9cff;
+    --text: #e8eaf0;
+    --text-dim: #7a8090;
+    --text-muted: #404555;
+    --pitch-green: #1a4a2a;
+    --pitch-line: rgba(255,255,255,0.15);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Barlow', sans-serif;
+    font-weight: 400;
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+
+  /* ─── HERO / LANDING ─── */
+  #hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    padding: 2rem;
+  }
+
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 50% -10%, rgba(245,197,24,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 40% at 20% 80%, rgba(43,156,255,0.05) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 40% at 80% 70%, rgba(0,216,122,0.04) 0%, transparent 60%);
+  }
+
+  .hero-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black, transparent);
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(245,197,24,0.1);
+    border: 1px solid var(--border-accent);
+    border-radius: 100px;
+    padding: 6px 16px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 2rem;
+    animation: fadeSlideUp 0.6s ease both;
+  }
+
+  .hero-badge::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 8px var(--green);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  .hero-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-style: italic;
+    font-size: clamp(5rem, 16vw, 14rem);
+    line-height: 0.85;
+    letter-spacing: -2px;
+    text-align: center;
+    color: #fff;
+    text-shadow: 0 0 80px rgba(245,197,24,0.2);
+    animation: fadeSlideUp 0.7s 0.1s ease both;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-title span {
+    color: var(--gold);
+    position: relative;
+  }
+
+  .hero-title span::after {
+    content: 'R';
+    position: absolute;
+    inset: 0;
+    color: var(--gold);
+    filter: blur(20px);
+    opacity: 0.5;
+  }
+
+  .hero-sub {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 300;
+    font-size: clamp(1rem, 2.5vw, 1.4rem);
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    text-align: center;
+    margin-top: 1.5rem;
+    animation: fadeSlideUp 0.7s 0.2s ease both;
+  }
+
+  .hero-tagline {
+    font-size: clamp(0.95rem, 2vw, 1.15rem);
+    color: var(--text-dim);
+    text-align: center;
+    max-width: 540px;
+    line-height: 1.7;
+    margin: 2rem auto 0;
+    animation: fadeSlideUp 0.7s 0.3s ease both;
+  }
+
+  .hero-cta {
+    display: flex;
+    gap: 1rem;
+    margin-top: 3rem;
+    animation: fadeSlideUp 0.7s 0.4s ease both;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .btn-primary {
+    background: var(--gold);
+    color: #000;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 1rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 16px 40px;
+    border: none;
+    cursor: pointer;
+    clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-primary::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,0.2);
+    transform: translateX(-100%);
+    transition: transform 0.3s;
+  }
+
+  .btn-primary:hover::before { transform: translateX(0); }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(245,197,24,0.4); }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--text);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 1rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 16px 40px;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+    transition: all 0.2s;
+  }
+
+  .btn-secondary:hover {
+    border-color: rgba(255,255,255,0.3);
+    background: rgba(255,255,255,0.05);
+    transform: translateY(-2px);
+  }
+
+  .hero-stats {
+    display: flex;
+    gap: 3rem;
+    margin-top: 5rem;
+    animation: fadeSlideUp 0.7s 0.5s ease both;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .hero-stat {
+    text-align: center;
+  }
+
+  .hero-stat-num {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: 2.5rem;
+    color: var(--gold);
+    line-height: 1;
+  }
+
+  .hero-stat-label {
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-top: 4px;
+  }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-muted);
+    font-size: 0.7rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    animation: fadeSlideUp 0.7s 0.8s ease both;
+  }
+
+  .scroll-line {
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, var(--text-muted), transparent);
+    animation: scrollBounce 2s infinite;
+  }
+
+  @keyframes scrollBounce {
+    0%, 100% { transform: scaleY(1); opacity: 1; }
+    50% { transform: scaleY(0.5); opacity: 0.5; }
+  }
+
+  @keyframes fadeSlideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ─── HOW IT WORKS ─── */
+  #how {
+    padding: 8rem 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .section-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.75rem;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1rem;
+  }
+
+  .section-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-style: italic;
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    line-height: 0.9;
+    color: #fff;
+    margin-bottom: 1.5rem;
+  }
+
+  .section-title em { color: var(--gold); font-style: normal; }
+
+  .flow-steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5px;
+    margin-top: 4rem;
+    background: var(--border);
+  }
+
+  .flow-step {
+    background: var(--surface);
+    padding: 2.5rem;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.3s;
+  }
+
+  .flow-step:hover { background: var(--surface2); }
+
+  .flow-step::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--gold), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .flow-step:hover::before { opacity: 1; }
+
+  .step-num {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: 5rem;
+    line-height: 1;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+    transition: color 0.3s;
+  }
+
+  .flow-step:hover .step-num { color: var(--gold-dim); }
+
+  .step-icon {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+  }
+
+  .step-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 1.3rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+  }
+
+  .step-desc {
+    font-size: 0.9rem;
+    line-height: 1.7;
+    color: var(--text-dim);
+  }
+
+  /* ─── GAME UI PREVIEW ─── */
+  #preview {
+    padding: 4rem 2rem 8rem;
+    max-width: 1300px;
+    margin: 0 auto;
+  }
+
+  .preview-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 3rem;
+  }
+
+  /* Game Screen Mockup */
+  .game-screen {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 40px 100px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.03);
+  }
+
+  /* Top Bar */
+  .game-topbar {
+    background: #000;
+    border-bottom: 1px solid var(--border);
+    padding: 0 1.5rem;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    gap: 0;
+  }
+
+  .topbar-logo {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-style: italic;
+    font-size: 1.4rem;
+    color: var(--gold);
+    letter-spacing: -1px;
+    margin-right: 2rem;
+    flex-shrink: 0;
+  }
+
+  .topbar-club {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 1.5rem;
+    border-left: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+    height: 100%;
+  }
+
+  .club-crest {
+    width: 28px;
+    height: 28px;
+    background: linear-gradient(135deg, #c8102e, #00005a);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+  }
+
+  .club-info small { font-size: 0.6rem; letter-spacing: 2px; text-transform: uppercase; color: var(--text-dim); display: block; }
+  .club-info strong { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 1rem; }
+
+  .topbar-budget {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 1.5rem;
+    border-right: 1px solid var(--border);
+    height: 100%;
+  }
+
+  .budget-label { font-size: 0.65rem; letter-spacing: 2px; text-transform: uppercase; color: var(--text-dim); }
+  .budget-amount { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 1.5rem; color: var(--green); }
+
+  .topbar-cards {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 1.5rem;
+    border-right: 1px solid var(--border);
+    height: 100%;
+  }
+
+  .active-card {
+    background: rgba(245,197,24,0.12);
+    border: 1px solid rgba(245,197,24,0.25);
+    border-radius: 3px;
+    padding: 4px 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--gold);
+    letter-spacing: 0.5px;
+  }
+
+  .topbar-players {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 1.5rem;
+    margin-left: auto;
+  }
+
+  .player-dot {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    border: 2px solid transparent;
+  }
+
+  .player-dot.you { background: var(--gold); color: #000; border-color: var(--gold); }
+  .player-dot.other { background: var(--surface3); color: var(--text-dim); }
+  .player-dot.deciding { border-color: var(--green); animation: pulseBorder 1.5s infinite; }
+
+  @keyframes pulseBorder {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(0,216,122,0.4); }
+    50% { box-shadow: 0 0 0 4px rgba(0,216,122,0); }
+  }
+
+  /* Main Game Body */
+  .game-body {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    min-height: 600px;
+  }
+
+  @media (max-width: 900px) {
+    .game-body { grid-template-columns: 1fr; }
+    .game-sidebar { display: none; }
+  }
+
+  /* Center Panel */
+  .game-center {
+    border-right: 1px solid var(--border);
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .decision-stage {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .stage-badge {
+    background: rgba(245,197,24,0.1);
+    border: 1px solid var(--border-accent);
+    padding: 4px 12px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold);
+    border-radius: 2px;
+  }
+
+  .stage-progress {
+    flex: 1;
+    height: 2px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .stage-progress-fill {
+    height: 100%;
+    background: var(--gold);
+    width: 45%;
+    border-radius: 2px;
+  }
+
+  .stage-count { font-size: 0.75rem; color: var(--text-dim); white-space: nowrap; }
+
+  /* Player Card */
+  .player-decision-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1.5rem;
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-start;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .player-decision-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; bottom: 0;
+    width: 3px;
+    background: var(--gold);
+  }
+
+  .player-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 4px;
+    background: linear-gradient(135deg, #1a2035, #0d1520);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    flex-shrink: 0;
+  }
+
+  .player-meta { flex: 1; }
+
+  .player-pos-badge {
+    display: inline-block;
+    background: rgba(43,156,255,0.15);
+    border: 1px solid rgba(43,156,255,0.3);
+    color: var(--blue);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.65rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 2px;
+    margin-bottom: 0.5rem;
+  }
+
+  .player-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 1.6rem;
+    line-height: 1;
+    margin-bottom: 0.25rem;
+  }
+
+  .player-details {
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    margin-bottom: 1rem;
+  }
+
+  .player-value-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .value-block small { font-size: 0.6rem; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-dim); display: block; margin-bottom: 2px; }
+  .value-block strong { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 1.1rem; }
+
+  .value-divider { width: 1px; height: 30px; background: var(--border); }
+
+  /* Keep/Sell Buttons */
+  .decision-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .btn-keep {
+    background: rgba(0,216,122,0.1);
+    border: 1px solid rgba(0,216,122,0.3);
+    color: var(--green);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    padding: 18px;
+    cursor: pointer;
+    clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .btn-keep:hover { background: rgba(0,216,122,0.2); transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,216,122,0.2); }
+
+  .btn-sell {
+    background: rgba(255,59,92,0.1);
+    border: 1px solid rgba(255,59,92,0.3);
+    color: var(--red);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    padding: 18px;
+    cursor: pointer;
+    clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .btn-sell:hover { background: rgba(255,59,92,0.2); transform: translateY(-2px); box-shadow: 0 8px 25px rgba(255,59,92,0.2); }
+
+  /* Replacement Market Panel */
+  .market-panel {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .market-header {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .market-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  .collision-badge {
+    background: rgba(255,59,92,0.15);
+    border: 1px solid rgba(255,59,92,0.3);
+    color: var(--red);
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 2px;
+    animation: pulseRed 1.5s infinite;
+  }
+
+  @keyframes pulseRed {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+  }
+
+  .market-options {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .market-option {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    cursor: pointer;
+    transition: background 0.2s;
+    position: relative;
+  }
+
+  .market-option:hover { background: var(--surface3); }
+  .market-option:last-child { border-bottom: none; }
+
+  .option-tier {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.6rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    width: 55px;
+    flex-shrink: 0;
+  }
+
+  .option-tier.top { color: var(--gold); }
+  .option-tier.mid { color: var(--blue); }
+  .option-tier.bot { color: var(--text-dim); }
+  .option-tier.bench { color: #8b5cf6; }
+
+  .option-player { flex: 1; }
+  .option-player-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 2px;
+  }
+
+  .option-player-sub { font-size: 0.72rem; color: var(--text-dim); }
+
+  .option-price {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
+    color: var(--gold);
+    flex-shrink: 0;
+  }
+
+  .option-contested {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .contest-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    animation: pulseRed 1s infinite;
+  }
+
+  .contest-dot.red { background: var(--red); }
+  .contest-dot.blue { background: var(--blue); animation-delay: 0.2s; }
+
+  /* Right Sidebar */
+  .game-sidebar {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .sidebar-section-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.7rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+  }
+
+  /* Finance Card */
+  .finance-card {
+    background: linear-gradient(135deg, #0f2a1a, #071a10);
+    border: 1px solid rgba(0,216,122,0.2);
+    border-radius: 4px;
+    padding: 1.25rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .finance-card::before {
+    content: '💰';
+    position: absolute;
+    right: -10px;
+    top: -10px;
+    font-size: 4rem;
+    opacity: 0.08;
+  }
+
+  .finance-card-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.65rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--green);
+    margin-bottom: 0.5rem;
+  }
+
+  .finance-card-effect {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 1.5rem;
+    color: var(--green);
+    margin-bottom: 0.25rem;
+  }
+
+  .finance-card-desc { font-size: 0.8rem; color: rgba(0,216,122,0.6); line-height: 1.5; }
+
+  /* Management Card */
+  .mgmt-card {
+    background: linear-gradient(135deg, #2a1a0a, #1a0f00);
+    border: 1px solid rgba(245,197,24,0.2);
+    border-radius: 4px;
+    padding: 1.25rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .mgmt-card::before {
+    content: '📋';
+    position: absolute;
+    right: -10px;
+    top: -10px;
+    font-size: 4rem;
+    opacity: 0.08;
+  }
+
+  .mgmt-card-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.65rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.5rem;
+  }
+
+  .mgmt-card-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
+    color: #fff;
+    margin-bottom: 0.25rem;
+  }
+
+  .mgmt-card-desc { font-size: 0.8rem; color: rgba(245,197,24,0.5); line-height: 1.5; }
+
+  /* Mini Pitch */
+  .mini-pitch {
+    background: var(--pitch-green);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1rem;
+    position: relative;
+    min-height: 200px;
+  }
+
+  .pitch-lines {
+    position: absolute;
+    inset: 8px;
+    border: 1px solid var(--pitch-line);
+  }
+
+  .pitch-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid var(--pitch-line);
+  }
+
+  .pitch-halfway {
+    position: absolute;
+    top: 50%;
+    left: 8px;
+    right: 8px;
+    height: 1px;
+    background: var(--pitch-line);
+  }
+
+  .pitch-players-grid {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 0 1rem;
+    min-height: 185px;
+    justify-content: space-between;
+  }
+
+  .pitch-row {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .pitch-player {
+    background: rgba(255,255,255,0.9);
+    color: #000;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 0.55rem;
+    cursor: pointer;
+    transition: transform 0.2s;
+    position: relative;
+  }
+
+  .pitch-player:hover { transform: scale(1.15); }
+  .pitch-player.sold { background: rgba(255,59,92,0.4); color: var(--red); border: 1px dashed rgba(255,59,92,0.5); }
+  .pitch-player.new { background: var(--green); color: #000; }
+  .pitch-player.gk { background: var(--gold); color: #000; }
+
+  /* Pitch Tooltip */
+  .pitch-player[data-name]:hover::after {
+    content: attr(data-name);
+    position: absolute;
+    bottom: calc(100% + 5px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: #000;
+    color: #fff;
+    font-size: 0.6rem;
+    padding: 3px 8px;
+    border-radius: 2px;
+    white-space: nowrap;
+    pointer-events: none;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+
+  /* ─── AUCTION MODAL ─── */
+  .auction-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    backdrop-filter: blur(6px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+  }
+
+  .auction-overlay.active {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .auction-modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--red);
+    width: 100%;
+    max-width: 500px;
+    border-radius: 4px;
+    overflow: hidden;
+    transform: translateY(20px);
+    transition: transform 0.3s;
+  }
+
+  .auction-overlay.active .auction-modal { transform: translateY(0); }
+
+  .auction-header {
+    background: rgba(255,59,92,0.08);
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--border);
+    text-align: center;
+  }
+
+  .auction-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.7rem;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 0.5rem;
+  }
+
+  .auction-player-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-style: italic;
+    font-size: 2rem;
+    color: #fff;
+  }
+
+  .auction-sub { font-size: 0.8rem; color: var(--text-dim); margin-top: 0.25rem; }
+
+  .auction-timer {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: 4rem;
+    color: var(--red);
+    text-align: center;
+    line-height: 1;
+    padding: 1.5rem;
+    animation: timerPulse 1s infinite;
+  }
+
+  @keyframes timerPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+  }
+
+  .auction-bids {
+    padding: 0 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 1.5rem;
+  }
+
+  .bid-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    background: var(--surface2);
+    border-radius: 3px;
+    border: 1px solid var(--border);
+  }
+
+  .bid-row.leading { border-color: rgba(0,216,122,0.3); background: rgba(0,216,122,0.05); }
+
+  .bid-player { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 0.95rem; }
+  .bid-amount { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 1.1rem; color: var(--gold); }
+  .bid-leading { font-size: 0.65rem; color: var(--green); font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+
+  .auction-input-row {
+    padding: 1.5rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    gap: 1rem;
+  }
+
+  .bid-input {
+    flex: 1;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 1.2rem;
+    padding: 12px 16px;
+    border-radius: 3px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .bid-input:focus { border-color: var(--gold); }
+
+  .btn-bid {
+    background: var(--red);
+    color: #fff;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 1rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-bid:hover { background: #ff1a3d; transform: translateY(-1px); }
+
+  /* ─── FEATURES ─── */
+  #features {
+    padding: 8rem 2rem;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .features-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    margin-top: 4rem;
+  }
+
+  .feature-card {
+    background: var(--surface);
+    padding: 2.5rem;
+    transition: background 0.3s;
+  }
+
+  .feature-card:hover { background: var(--surface2); }
+
+  .feature-icon {
+    width: 48px;
+    height: 48px;
+    background: var(--gold-glow);
+    border: 1px solid var(--border-accent);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .feature-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 1.2rem;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.75rem;
+    text-transform: uppercase;
+  }
+
+  .feature-desc { font-size: 0.9rem; color: var(--text-dim); line-height: 1.7; }
+
+  /* ─── LOBBY FLOW ─── */
+  #lobby {
+    padding: 8rem 2rem;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  .lobby-flow {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-top: 4rem;
+  }
+
+  @media (max-width: 700px) {
+    .lobby-flow { grid-template-columns: 1fr; }
+  }
+
+  .lobby-step {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 2rem;
+    text-align: center;
+    position: relative;
+  }
+
+  .lobby-step::after {
+    content: '→';
+    position: absolute;
+    right: -1.2rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    font-size: 1.2rem;
+  }
+
+  .lobby-step:last-child::after { display: none; }
+
+  .lobby-step-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+  .lobby-step-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 1.1rem; text-transform: uppercase; margin-bottom: 0.5rem; }
+  .lobby-step-desc { font-size: 0.85rem; color: var(--text-dim); line-height: 1.6; }
+
+  /* ─── CRISIS BANNER ─── */
+  #crisis {
+    padding: 6rem 2rem;
+    background: radial-gradient(ellipse 100% 100% at 50% 0%, rgba(255,59,92,0.06), transparent 60%);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .crisis-inner {
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  .crisis-scenarios {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+    margin-top: 3rem;
+  }
+
+  .scenario-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1.5rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .scenario-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(245,197,24,0.05), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .scenario-card:hover { border-color: rgba(245,197,24,0.2); transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+  .scenario-card:hover::before { opacity: 1; }
+
+  .scenario-crest {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+  }
+
+  .scenario-club {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 1.2rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .scenario-league {
+    font-size: 0.7rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 1rem;
+  }
+
+  .scenario-crisis {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    line-height: 1.6;
+    margin-bottom: 1rem;
+  }
+
+  .scenario-budget {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 1.3rem;
+    color: var(--green);
+  }
+
+  .scenario-budget small { font-size: 0.7rem; font-weight: 400; color: var(--text-dim); margin-left: 4px; }
+
+  .scenario-difficulty {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 2px;
+  }
+
+  .difficulty-hard { background: rgba(255,59,92,0.15); color: var(--red); border: 1px solid rgba(255,59,92,0.3); }
+  .difficulty-medium { background: rgba(245,197,24,0.1); color: var(--gold); border: 1px solid rgba(245,197,24,0.3); }
+  .difficulty-easy { background: rgba(0,216,122,0.1); color: var(--green); border: 1px solid rgba(0,216,122,0.3); }
+
+  /* ─── CTA BOTTOM ─── */
+  #bottom-cta {
+    padding: 10rem 2rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  #bottom-cta::before {
+    content: 'REBUILD';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-style: italic;
+    font-size: clamp(8rem, 20vw, 20rem);
+    color: rgba(255,255,255,0.015);
+    white-space: nowrap;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .cta-inner { position: relative; z-index: 1; }
+  .cta-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-style: italic; font-size: clamp(2rem, 6vw, 4rem); margin-bottom: 1.5rem; }
+  .cta-sub { font-size: 1rem; color: var(--text-dim); margin-bottom: 3rem; }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 50;
+    padding: 0 2rem;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(7,8,10,0.9);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(10px);
+  }
+
+  .nav-logo {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-style: italic;
+    font-size: 1.6rem;
+    color: var(--gold);
+    letter-spacing: -1px;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 0.85rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--gold); }
+
+  @media (max-width: 700px) {
+    .nav-links { display: none; }
+    .hero-stats { gap: 1.5rem; }
+  }
+
+  /* Footer */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 3rem 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: gap;
+    gap: 1rem;
+  }
+
+  .footer-logo { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-style: italic; font-size: 1.4rem; color: var(--gold); }
+  .footer-text { font-size: 0.8rem; color: var(--text-muted); }
+
+  /* Interactive Demo Trigger */
+  .demo-trigger-bar {
+    background: linear-gradient(90deg, rgba(245,197,24,0.08), rgba(255,59,92,0.06), rgba(43,156,255,0.05));
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1.25rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 2rem;
+  }
+
+  .demo-trigger-bar:hover { border-color: rgba(245,197,24,0.2); background: linear-gradient(90deg, rgba(245,197,24,0.12), rgba(255,59,92,0.08), rgba(43,156,255,0.07)); }
+
+  .demo-trigger-text { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 1rem; letter-spacing: 1px; text-transform: uppercase; }
+  .demo-trigger-pill {
+    background: rgba(0,216,122,0.15);
+    border: 1px solid rgba(0,216,122,0.3);
+    color: var(--green);
+    padding: 4px 12px;
+    border-radius: 100px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .demo-trigger-arrow { color: var(--text-dim); font-size: 1.2rem; transition: transform 0.2s; }
+  .demo-trigger-bar:hover .demo-trigger-arrow { transform: translateX(4px); }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">REBUILDR</div>
+  <ul class="nav-links">
+    <li><a href="#how">How It Works</a></li>
+    <li><a href="#preview">Game UI</a></li>
+    <li><a href="#crisis">Scenarios</a></li>
+    <li><a href="#features">Features</a></li>
+  </ul>
+  <button class="btn-primary" style="font-size:0.8rem;padding:10px 24px" onclick="document.getElementById('lobbyModal').classList.add('active')">Create Lobby</button>
+</nav>
+
+<!-- HERO -->
+<section id="hero" style="padding-top:80px">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+
+  <div class="hero-badge">⚽ 3-Player Football Rebuild Showdown</div>
+
+  <h1 class="hero-title">
+    RE<span>B</span>UILDR
+  </h1>
+
+  <p class="hero-sub">Keep it. Sell it. Win the debate.</p>
+
+  <p class="hero-tagline">
+    Three managers. One broken club. Every decision public at the end.<br>
+    The real-time football rebuild game where every euro spent tells a story.
+  </p>
+
+  <div class="hero-cta">
+    <button class="btn-primary" onclick="document.getElementById('lobbyModal').classList.add('active')">▶ Create Lobby</button>
+    <button class="btn-secondary" onclick="document.getElementById('preview').scrollIntoView({behavior:'smooth'})">See Game UI</button>
+  </div>
+
+  <div class="hero-stats">
+    <div class="hero-stat">
+      <div class="hero-stat-num">3</div>
+      <div class="hero-stat-label">Players Max</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-num">5</div>
+      <div class="hero-stat-label">Top Leagues</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-num">98</div>
+      <div class="hero-stat-label">Real Clubs</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-num">∞</div>
+      <div class="hero-stat-label">Replayability</div>
+    </div>
+  </div>
+
+  <div class="scroll-hint">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how">
+  <div class="section-label">The Format</div>
+  <h2 class="section-title">One Club.<br>Three <em>Visions.</em></h2>
+  <p style="max-width:540px;font-size:0.95rem;line-height:1.8;color:var(--text-dim)">
+    Every session follows the same dramatic rhythm as the rebuild show format: manager first, then player by player, then the auction pressure, then the big reveal.
+  </p>
+
+  <div class="flow-steps">
+    <div class="flow-step">
+      <div class="step-num">01</div>
+      <div class="step-icon">🏟️</div>
+      <div class="step-title">Lobby & Club Crisis</div>
+      <div class="step-desc">Host creates a lobby, two players join. A club scenario drops — the crisis summary sets the stakes before a single decision is made.</div>
+    </div>
+    <div class="flow-step">
+      <div class="step-num">02</div>
+      <div class="step-icon">🃏</div>
+      <div class="step-title">Management Cards</div>
+      <div class="step-desc">Each player draws a management card. Some force sales. Some demand big signings. One might give total freedom. Cards stay pinned on screen all game.</div>
+    </div>
+    <div class="flow-step">
+      <div class="step-num">03</div>
+      <div class="step-icon">🧑‍💼</div>
+      <div class="step-title">Manager Decision</div>
+      <div class="step-desc">Keep the current manager or fire him and enter the manager market. Three candidates. Prices attached. Bidding starts if two players want the same man.</div>
+    </div>
+    <div class="flow-step">
+      <div class="step-num">04</div>
+      <div class="step-icon">⚖️</div>
+      <div class="step-title">Keep or Sell</div>
+      <div class="step-desc">Each key position comes up one by one. Sale price shown. You choose. Sell, and three surfaced replacements appear — bottom option, middle option, top option.</div>
+    </div>
+    <div class="flow-step">
+      <div class="step-num">05</div>
+      <div class="step-icon">🔨</div>
+      <div class="step-title">Live Auctions</div>
+      <div class="step-desc">Two players want the same signing? Auction mode starts. Highest valid bid wins. Loser returns to the market immediately. Budget updates live for everyone.</div>
+    </div>
+    <div class="flow-step">
+      <div class="step-num">06</div>
+      <div class="step-icon">🏆</div>
+      <div class="step-title">Reveal & Vote</div>
+      <div class="step-desc">All three builds revealed one by one. Side-by-side comparison shown. Each player votes for their favourite — not themselves. The crowd decides the winner.</div>
+    </div>
+  </div>
+</section>
+
+<!-- GAME UI PREVIEW -->
+<section id="preview">
+  <div class="preview-header">
+    <div>
+      <div class="section-label">Game Interface</div>
+      <h2 class="section-title">Every Decision<br><em>Counts.</em></h2>
+    </div>
+    <p style="max-width:380px;font-size:0.9rem;line-height:1.7;color:var(--text-dim)">
+      Clean, fast, dark. Your budget, cards, and current decision always visible. The market slides in when you sell. The auction fires up when there's a collision.
+    </p>
+  </div>
+
+  <div class="demo-trigger-bar" onclick="openAuction()">
+    <div class="demo-trigger-text">🔨 Try the Live Auction Modal</div>
+    <div style="display:flex;align-items:center;gap:1rem">
+      <div class="demo-trigger-pill">Interactive Demo</div>
+      <div class="demo-trigger-arrow">→</div>
+    </div>
+  </div>
+
+  <!-- Full Game Screen Mockup -->
+  <div class="game-screen">
+    <!-- Top Bar -->
+    <div class="game-topbar">
+      <div class="topbar-logo">REBUILDR</div>
+
+      <div class="topbar-club">
+        <div class="club-crest">🔵</div>
+        <div class="club-info">
+          <small>Rebuilding</small>
+          <strong>Manchester United</strong>
+        </div>
+      </div>
+
+      <div class="topbar-budget">
+        <div>
+          <div class="budget-label">Budget</div>
+          <div class="budget-amount">£147M</div>
+        </div>
+      </div>
+
+      <div class="topbar-cards">
+        <div class="active-card">⚡ Sign 2×PL Players</div>
+        <div class="active-card">📉 −£20M Facility Hit</div>
+      </div>
+
+      <div class="topbar-players" style="display:flex;align-items:center;gap:8px">
+        <div class="player-dot you" title="You">Y</div>
+        <div class="player-dot other deciding" title="Player 2 — Deciding">P2</div>
+        <div class="player-dot other" title="Player 3 — Done">P3</div>
+      </div>
+    </div>
+
+    <!-- Body -->
+    <div class="game-body">
+      <!-- Center Panel -->
+      <div class="game-center">
+        <div class="decision-stage">
+          <div class="stage-badge">⚽ Centre-Forward</div>
+          <div class="stage-progress"><div class="stage-progress-fill"></div></div>
+          <div class="stage-count">6 of 13 decisions</div>
+        </div>
+
+        <div class="player-decision-card">
+          <div class="player-avatar">⚽</div>
+          <div class="player-meta">
+            <div class="player-pos-badge">CF · #9</div>
+            <div class="player-name">Rasmus Højlund</div>
+            <div class="player-details">Denmark · Age 22 · Contract: Jun 2028 · Starter</div>
+            <div class="player-value-row">
+              <div class="value-block">
+                <small>Market Value</small>
+                <strong>€70M</strong>
+              </div>
+              <div class="value-divider"></div>
+              <div class="value-block">
+                <small>Sale Price</small>
+                <strong style="color:var(--gold)">€65M</strong>
+              </div>
+              <div class="value-divider"></div>
+              <div class="value-block">
+                <small>Wages</small>
+                <strong style="color:var(--text-dim)">£150k/w</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="decision-actions">
+          <button class="btn-keep">✓ Keep</button>
+          <button class="btn-sell" onclick="showMarket()">✕ Sell for €65M</button>
+        </div>
+
+        <!-- Replacement Market (shown after sell) -->
+        <div class="market-panel" id="marketPanel" style="display:none">
+          <div class="market-header">
+            <div class="market-title">Replacement Market · CF</div>
+            <div class="collision-badge">⚡ P2 Targeting Same</div>
+          </div>
+          <div class="market-options">
+            <div class="market-option" onclick="openAuction()">
+              <div class="option-tier top">TOP</div>
+              <div class="option-player">
+                <div class="option-player-name">Viktor Gyökeres</div>
+                <div class="option-player-sub">Sporting CP · Sweden · 27 · PL Card ✓</div>
+              </div>
+              <div class="option-price">€85M</div>
+              <div class="option-contested">
+                <div class="contest-dot red"></div>
+                <div class="contest-dot blue"></div>
+              </div>
+            </div>
+            <div class="market-option">
+              <div class="option-tier mid">MID</div>
+              <div class="option-player">
+                <div class="option-player-name">Ivan Toney</div>
+                <div class="option-player-sub">Al-Ahli → Loan · England · 29 · PL Card ✓</div>
+              </div>
+              <div class="option-price">€42M</div>
+            </div>
+            <div class="market-option">
+              <div class="option-tier bot">LOW</div>
+              <div class="option-player">
+                <div class="option-player-name">Liam Delap</div>
+                <div class="option-player-sub">Ipswich Town · England · 21 · PL Card ✓</div>
+              </div>
+              <div class="option-price">€28M</div>
+            </div>
+            <div class="market-option">
+              <div class="option-tier bench">BENCH</div>
+              <div class="option-player">
+                <div class="option-player-name">Promote Zirkzee</div>
+                <div class="option-player-sub">Internal · Netherlands · 24 · Rotation</div>
+              </div>
+              <div class="option-price">Free</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="game-sidebar">
+        <!-- Mini Pitch -->
+        <div>
+          <div class="sidebar-section-title">Formation View · 4-2-3-1</div>
+          <div class="mini-pitch">
+            <div class="pitch-lines"></div>
+            <div class="pitch-halfway"></div>
+            <div class="pitch-center"></div>
+            <div class="pitch-players-grid">
+              <div class="pitch-row">
+                <div class="pitch-player sold" data-name="Højlund (Sold)">CF</div>
+              </div>
+              <div class="pitch-row">
+                <div class="pitch-player" data-name="Rashford">LW</div>
+                <div class="pitch-player new" data-name="Odegaard (New!)">AM</div>
+                <div class="pitch-player" data-name="Amad">RW</div>
+              </div>
+              <div class="pitch-row">
+                <div class="pitch-player" data-name="Mainoo">CM</div>
+                <div class="pitch-player new" data-name="Cabal (New!)">CM</div>
+              </div>
+              <div class="pitch-row">
+                <div class="pitch-player" data-name="Dalot">RB</div>
+                <div class="pitch-player" data-name="Maguire">CB</div>
+                <div class="pitch-player" data-name="Martínez">CB</div>
+                <div class="pitch-player" data-name="Shaw">LB</div>
+              </div>
+              <div class="pitch-row">
+                <div class="pitch-player gk" data-name="Onana">GK</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Finance Card -->
+        <div class="finance-card">
+          <div class="finance-card-label">Finance Card Active</div>
+          <div class="finance-card-effect">+£40M 🎓</div>
+          <div class="finance-card-desc">Academy profits boost. Applied to your budget automatically.</div>
+        </div>
+
+        <!-- Management Card -->
+        <div class="mgmt-card">
+          <div class="mgmt-card-label">Management Card</div>
+          <div class="mgmt-card-title">Sign 2 PL Players</div>
+          <div class="mgmt-card-desc">At least 2 of your signings must come from a Premier League club.</div>
+        </div>
+
+        <!-- Spend Tracker -->
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:1.25rem">
+          <div class="sidebar-section-title">Spend Tracker</div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;justify-content:space-between;font-size:0.82rem">
+              <span style="color:var(--text-dim)">Total In</span>
+              <span style="color:var(--green);font-family:'Barlow Condensed',sans-serif;font-weight:700">+£118M</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:0.82rem">
+              <span style="color:var(--text-dim)">Total Out</span>
+              <span style="color:var(--red);font-family:'Barlow Condensed',sans-serif;font-weight:700">−£71M</span>
+            </div>
+            <div style="height:1px;background:var(--border);margin:4px 0"></div>
+            <div style="display:flex;justify-content:space-between;font-size:0.9rem">
+              <span>Net</span>
+              <span style="color:var(--gold);font-family:'Barlow Condensed',sans-serif;font-weight:800">+£47M</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CRISIS SCENARIOS -->
+<section id="crisis">
+  <div class="crisis-inner">
+    <div class="section-label">Club Scenarios</div>
+    <h2 class="section-title">Pick Your <em>Crisis.</em></h2>
+    <p style="font-size:0.95rem;line-height:1.8;color:var(--text-dim);max-width:500px;margin-top:0.5rem">
+      Each scenario drops you into a real football crisis. The budget, card decks, and option pools are all calibrated to the club's situation.
+    </p>
+
+    <div class="crisis-scenarios">
+      <div class="scenario-card">
+        <div class="scenario-difficulty difficulty-hard">HARD</div>
+        <div class="scenario-crest" style="background:linear-gradient(135deg,#c8102e,#00005a)">🔵</div>
+        <div class="scenario-club">Manchester United</div>
+        <div class="scenario-league">Premier League · England</div>
+        <div class="scenario-crisis">A squad in freefall after multiple trophy-less seasons. Mass exodus expected. New era, new identity — but the money isn't unlimited.</div>
+        <div class="scenario-budget">£150M <small>opening budget</small></div>
+      </div>
+
+      <div class="scenario-card">
+        <div class="scenario-difficulty difficulty-medium">MEDIUM</div>
+        <div class="scenario-crest" style="background:linear-gradient(135deg,#ffed00,#000)">🟡</div>
+        <div class="scenario-club">Borussia Dortmund</div>
+        <div class="scenario-league">Bundesliga · Germany</div>
+        <div class="scenario-crisis">Lost the league title again. Key players want out. Aggressive rebuild needed while maintaining Champions League relevance.</div>
+        <div class="scenario-budget">€95M <small>opening budget</small></div>
+      </div>
+
+      <div class="scenario-card">
+        <div class="scenario-difficulty difficulty-hard">HARD</div>
+        <div class="scenario-crest" style="background:linear-gradient(135deg,#e00034,#fff)">🔴</div>
+        <div class="scenario-club">AC Milan</div>
+        <div class="scenario-league">Serie A · Italy</div>
+        <div class="scenario-crisis">Post-Scudetto slump. Aging core, financial pressure, Redbird demanding results. Rebuild on a budget with an eye on European glory.</div>
+        <div class="scenario-budget">€80M <small>opening budget</small></div>
+      </div>
+
+      <div class="scenario-card">
+        <div class="scenario-difficulty difficulty-medium">MEDIUM</div>
+        <div class="scenario-crest" style="background:linear-gradient(135deg,#004d98,#a50044)">🔷</div>
+        <div class="scenario-club">FC Barcelona</div>
+        <div class="scenario-league">La Liga · Spain</div>
+        <div class="scenario-crisis">La Liga's Financial Fair Play restrictions ease slightly. Time to reset the squad with a youth-heavy approach while paying off debt.</div>
+        <div class="scenario-budget">€120M <small>opening budget</small></div>
+      </div>
+
+      <div class="scenario-card">
+        <div class="scenario-difficulty difficulty-easy">EASY</div>
+        <div class="scenario-crest" style="background:linear-gradient(135deg,#003090,#fff)">🔵</div>
+        <div class="scenario-club">PSG</div>
+        <div class="scenario-league">Ligue 1 · France</div>
+        <div class="scenario-crisis">Post-galactico era. The superstar-or-bust era is over. Build a cohesive unit that can finally conquer the Champions League.</div>
+        <div class="scenario-budget">€200M <small>opening budget</small></div>
+      </div>
+
+      <div class="scenario-card" style="border-style:dashed;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:200px" onclick="document.getElementById('lobbyModal').classList.add('active')">
+        <div style="font-size:2.5rem;margin-bottom:1rem">⚙️</div>
+        <div class="scenario-club" style="color:var(--text-dim)">Custom Scenario</div>
+        <div class="scenario-league">Host sets club, budget & cards</div>
+        <div style="margin-top:1rem;color:var(--gold);font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:0.8rem;letter-spacing:2px">CREATE LOBBY →</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="features-inner">
+    <div class="section-label">Why Rebuildr</div>
+    <h2 class="section-title">Built for the<br><em>Drama.</em></h2>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🔴</div>
+        <div class="feature-title">Real-Time Auctions</div>
+        <div class="feature-desc">When two players target the same signing, a live auction fires instantly. Countdown, minimum increments, live budget validation. The tension is real.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <div class="feature-title">Dynamic Card System</div>
+        <div class="feature-desc">Management cards constrain your rebuild. Finance cards swing your budget mid-game. Cards are drawn randomly and stay pinned on screen — no forgetting your restrictions.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🎯</div>
+        <div class="feature-title">Guided Keep/Sell Loop</div>
+        <div class="feature-desc">The main action is never a giant database search. Position by position, player by player. Sell, and exactly three surfaced options appear for that role.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🌍</div>
+        <div class="feature-title">Top 5 League Data</div>
+        <div class="feature-desc">Players from every club across the Premier League, La Liga, Bundesliga, Serie A and Ligue 1. Real names, real values, realistic transfer logic.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🧠</div>
+        <div class="feature-title">Realism Engine</div>
+        <div class="feature-desc">Prices reflect age, contract length, club prestige, and destination fit. Absurd deals get blocked. Gyökeres doesn't move to League One for €3M.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔄</div>
+        <div class="feature-title">Infinite Replayability</div>
+        <div class="feature-desc">Weighted randomness means every rebuild surfaces different names. Same club, same scenario — different shortlists. The same three signings won't appear every time.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LOBBY SECTION -->
+<section id="lobby">
+  <div class="section-label">The Lobby</div>
+  <h2 class="section-title">Three Players.<br><em>One Briefing.</em></h2>
+  <p style="max-width:500px;font-size:0.95rem;line-height:1.8;color:var(--text-dim);margin-top:0.5rem">
+    Get in, pick your crisis, and rebuild. The whole lobby-to-reveal loop should feel like a show episode, not a spreadsheet.
+  </p>
+
+  <div class="lobby-flow">
+    <div class="lobby-step">
+      <div class="lobby-step-icon">🏠</div>
+      <div class="lobby-step-title">Host Creates</div>
+      <div class="lobby-step-desc">Name the lobby, pick a scenario or go custom. Share the code with two friends.</div>
+    </div>
+    <div class="lobby-step">
+      <div class="lobby-step-icon">👥</div>
+      <div class="lobby-step-title">2 Players Join</div>
+      <div class="lobby-step-desc">Enter the code or use the link. Exactly 3 players required — no more, no less.</div>
+    </div>
+    <div class="lobby-step">
+      <div class="lobby-step-icon">🚀</div>
+      <div class="lobby-step-title">Game Starts</div>
+      <div class="lobby-step-desc">Crisis summary drops. Cards are drawn. Decisions begin. Everyone goes at the same time.</div>
+    </div>
+  </div>
+</section>
+
+<!-- BOTTOM CTA -->
+<section id="bottom-cta">
+  <div class="cta-inner">
+    <h2 class="cta-title">Ready to Tear It Down<br>and <em>Build It Back?</em></h2>
+    <p class="cta-sub">Three managers. One shot. Let the rebuild begin.</p>
+    <button class="btn-primary" style="font-size:1.1rem;padding:20px 60px" onclick="document.getElementById('lobbyModal').classList.add('active')">▶ Start Your Rebuild</button>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-logo">REBUILDR</div>
+  <div class="footer-text">A real-time 3-player football rebuild showdown. Real clubs. Real players. Real drama.</div>
+</footer>
+
+<!-- AUCTION MODAL -->
+<div class="auction-overlay" id="auctionModal" onclick="if(event.target===this)closeAuction()">
+  <div class="auction-modal">
+    <div class="auction-header">
+      <div class="auction-label">⚡ Live Auction — Contested Signing</div>
+      <div class="auction-player-name">Viktor Gyökeres</div>
+      <div class="auction-sub">CF · Sporting CP · Sweden · 27 · €85M base</div>
+    </div>
+
+    <div class="auction-timer" id="auctionTimer">14</div>
+
+    <div class="auction-bids">
+      <div class="bid-row leading">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div class="player-dot you" style="width:28px;height:28px;font-size:0.75rem">Y</div>
+          <div class="bid-player">You</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <div class="bid-leading">LEADING</div>
+          <div class="bid-amount">€91M</div>
+        </div>
+      </div>
+      <div class="bid-row">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div class="player-dot other" style="width:28px;height:28px;font-size:0.75rem">P2</div>
+          <div class="bid-player">Player 2</div>
+        </div>
+        <div class="bid-amount" style="color:var(--text-dim)">€88M</div>
+      </div>
+    </div>
+
+    <div class="auction-input-row">
+      <input class="bid-input" type="text" placeholder="Enter bid amount (€M)" id="bidInputField" value="94">
+      <button class="btn-bid" onclick="placeBid()">Bid</button>
+    </div>
+  </div>
+</div>
+
+<!-- LOBBY MODAL -->
+<div class="auction-overlay" id="lobbyModal" onclick="if(event.target===this)this.classList.remove('active')">
+  <div class="auction-modal" style="border-top-color:var(--gold);max-width:460px">
+    <div class="auction-header" style="background:rgba(245,197,24,0.06)">
+      <div class="auction-label" style="color:var(--gold)">🏟️ Create a Rebuild Lobby</div>
+      <div class="auction-player-name" style="font-size:1.6rem">Start the Session</div>
+      <div class="auction-sub">Share the code with 2 friends to begin</div>
+    </div>
+
+    <div style="padding:1.5rem;display:flex;flex-direction:column;gap:1rem">
+      <div>
+        <div style="font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-bottom:8px">Your Name</div>
+        <input class="bid-input" type="text" placeholder="Manager name..." style="width:100%">
+      </div>
+      <div>
+        <div style="font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-bottom:8px">Scenario</div>
+        <select class="bid-input" style="width:100%;background:var(--surface2);cursor:pointer">
+          <option>Manchester United — £150M</option>
+          <option>Borussia Dortmund — €95M</option>
+          <option>AC Milan — €80M</option>
+          <option>FC Barcelona — €120M</option>
+          <option>PSG — €200M</option>
+          <option>Custom Scenario</option>
+        </select>
+      </div>
+
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:1.25rem;text-align:center;margin-top:0.5rem">
+        <div style="font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-bottom:0.5rem">Lobby Code</div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:2.5rem;letter-spacing:6px;color:var(--gold)">RBL-4921</div>
+        <div style="font-size:0.75rem;color:var(--text-dim);margin-top:4px">Share this with 2 friends</div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+        <div style="background:var(--surface3);border:1px solid var(--border);border-radius:3px;padding:1rem;text-align:center">
+          <div class="player-dot you" style="margin:0 auto 8px">Y</div>
+          <div style="font-size:0.7rem;color:var(--green)">Ready</div>
+        </div>
+        <div style="background:var(--surface3);border:1px dashed var(--border);border-radius:3px;padding:1rem;text-align:center">
+          <div style="width:32px;height:32px;border-radius:50%;border:2px dashed var(--text-muted);margin:0 auto 8px;display:flex;align-items:center;justify-content:center;color:var(--text-muted);font-size:1rem">+</div>
+          <div style="font-size:0.7rem;color:var(--text-muted)">Waiting...</div>
+        </div>
+        <div style="background:var(--surface3);border:1px dashed var(--border);border-radius:3px;padding:1rem;text-align:center">
+          <div style="width:32px;height:32px;border-radius:50%;border:2px dashed var(--text-muted);margin:0 auto 8px;display:flex;align-items:center;justify-content:center;color:var(--text-muted);font-size:1rem">+</div>
+          <div style="font-size:0.7rem;color:var(--text-muted)">Waiting...</div>
+        </div>
+      </div>
+
+      <button class="btn-primary" style="width:100%;font-size:1rem;padding:16px;clip-path:none;border-radius:3px">Copy Lobby Link</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  let timerInterval = null;
+  let timeLeft = 14;
+
+  function openAuction() {
+    document.getElementById('auctionModal').classList.add('active');
+    timeLeft = 14;
+    document.getElementById('auctionTimer').textContent = timeLeft;
+    clearInterval(timerInterval);
+    timerInterval = setInterval(() => {
+      timeLeft--;
+      document.getElementById('auctionTimer').textContent = timeLeft;
+      if (timeLeft <= 5) {
+        document.getElementById('auctionTimer').style.color = '#ff1a3d';
+      }
+      if (timeLeft <= 0) {
+        clearInterval(timerInterval);
+        document.getElementById('auctionTimer').textContent = '⚡';
+        setTimeout(closeAuction, 1000);
+      }
+    }, 1000);
+  }
+
+  function closeAuction() {
+    clearInterval(timerInterval);
+    document.getElementById('auctionModal').classList.remove('active');
+    document.getElementById('auctionTimer').style.color = 'var(--red)';
+  }
+
+  function placeBid() {
+    const val = document.getElementById('bidInputField').value;
+    if (!val) return;
+    document.getElementById('auctionTimer').textContent = '✓';
+    clearInterval(timerInterval);
+    setTimeout(() => {
+      closeAuction();
+    }, 800);
+  }
+
+  function showMarket() {
+    const panel = document.getElementById('marketPanel');
+    panel.style.display = 'block';
+    panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  // Keyboard close
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      closeAuction();
+      document.getElementById('lobbyModal').classList.remove('active');
+    }
+  });
+
+  // Smooth reveal on scroll
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = '1';
+        entry.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.flow-step, .feature-card, .scenario-card, .lobby-step').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(20px)';
+    el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+    observer.observe(el);
+  });
+</script>
+</body>
+</html>
